@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>HTML/Javascript Test</title>    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        //****************************** Begin of Your Javascript *****************************************************************************************************
+        // Please write you javascript here.
+
+        // AF : Africa         geonameId=6255146
+        // AS : Asia           geonameId=6255147
+        // EU : Europe         geonameId=6255148
+        // NA : North America      geonameId=6255149
+        // OC : Oceania            geonameId=6255151
+        // SA : South America      geonameId=6255150
+        // AN : Antarctica         geonameId=6255152
+
+        var country = new Array(), city = new Array();
+        country[0]=[];  //AF
+        country[1]=[];  //AS
+        country[2]=[];  //EU
+        country[3]=[];  //NA
+        country[4]=[];  //OC
+        country[5]=[];  //SA
+        country[6]=[];  //AN
+
+        city[0]=["city0", "city00", "city000"]; 
+        city[1]=["city1", "city11", "city111"]; 
+        city[2]=["city2",]; 
+        city[3]=["city0"]; 
+        city[4]=["city1"]; 
+        city[5]=["city2"]; 
+        city[6]=["city0"]; 
+        city[7]=["city1"]; 
+        city[8]=["city2"]; 
+        city[9]=["city0"]; 
+        city[10]=["city1"]; 
+        city[11]=["city2"]; 
+        city[12]=["city0"]; 
+        city[13]=["city1"]; 
+        city[14]=["city2"]; 
+        city[15]=["city2"]; 
+
+        var candidates = ["AF", "AS", "EU", "NA", "OC", "SA", "SN"];
+        var bInfo = [];
+
+        function sort(array) {
+        	array.sort();
+        }
+
+        function getContinent(){
+        	var continent = [];
+			$("input[type=checkbox]:checked").each(function () {
+  				continent.push($(this).val());
+			});
+			return continent;
+        }
+
+        function getCountry() {
+        	document.test.country.options.length = 0;
+        	var arr = checkContinent(getContinent());
+        	var newCountry = ["Please Select"];
+        	for(var i=0; i<arr.length; ++i) {
+        		newCountry = newCountry.concat(country[arr[i]]);        		
+        	}
+        	for(var i=0; i<newCountry.length; ++i) {
+                document.test.country.options[i] = new Option(newCountry[i], newCountry[i]);   //create new selections
+        	}
+            document.test.country.length = newCountry[index].length;  //delete selections
+
+        }
+
+        function checkContinent(continent) {
+        	var conArr = [];
+        	var index = 0;
+        	for(var i=0; i<continent.length; ++i) {
+        		for(var j=0; j<candidates.length; ++j) {
+        			if(candidates[j].indexOf(continent[i]) > -1) {
+        				conArr[index]=j;
+        				index++;
+        			}
+        		}
+        	}
+        	return conArr;
+        }
+
+        function getCity(name) {
+        	var cityArr = ["Please Select"];
+        	var cities = bInfo;
+        	for(var i=0; i<cities.length; ++i) {
+        		if(cities[i] == name) {
+        			cityArr = cityArr.concat(city[i]);
+        		}
+        	}
+        	for(var i=0; i<cityArr.length; ++i) {
+        		document.test.city.options[i] = new Option(cityArr[i], cityArr[i]);
+        	}
+        	document.test.city.length = city[index].length;
+        }
+
+        function getData() {
+        	$.get("http://ws.geonames.org/countryInfoCSV?lang=it&username=joanlin", function(data){
+        		parseData(data.toString());
+        		testData();
+        	});
+        }
+
+        function parseData(data) {
+        	var aInfo = [];
+        	var infoIndex = 0;
+        	var countCand = new Array();
+        	var line = data.split("\n");
+        	var length = line.length;
+        	for(var i=1; i<length; ++i){
+        		var word = line[i].split("\t");
+        		aInfo = aInfo.concat(word[8]);
+        		bInfo = bInfo.concat(word[4]);
+        		infoIndex++;
+        	}        
+
+        	for(var i=0; i<aInfo.length; ++i){     
+        		for(var j=0; j<candidates.length; ++j) {
+        			if(aInfo[i] == candidates[j]){
+        				country[j] = country[j].concat(bInfo[i]);
+        			}
+        		}
+        	}
+
+        	
+        }
+
+        function testData() {
+        		$.ajax({
+        			url: "http://api.geonames.org/citiesJSON{?north=44.1&south=-9.9&east=-22.4&west=55.2&lang=de&username=demo",       
+        			error: function(jqXHR, exception) {
+        				loadError(jqXHR, exception);
+        			}, 		
+        			success: function (data) {
+        				var obj = $.parseJSON(data);
+        				// alert("obj="+obj);
+        				$.each(obj.geonames, function(index, jsonVal){
+        					alert("jsonVal="+jsonVal);
+        					$.each(jsonVal.val, function(index, val){
+							// var rowId = ids[index];
+        					for(var i=0; i<val.split(",").length; ++i) {
+        						var test = val.splet(",")[i];
+        						// alert("test="+test);
+        					}
+        					});
+        				});
+        			}
+        		});
+        }      
+        
+
+        //****************************** End of Your Javascript *****************************************************************************************************
+	</script>
+</head>
+<body onload="getData()">
+                <!-- ***************************************************************** start of your implementation of HTML ******************************************************** -->
+                <h2>
+                    Your implemetation</h2>
+                <table>
+                    <tr>
+                        <td>
+                            Continent
+                        </td>
+                        <td>
+                            <input type="checkbox" value="AF" id="AF" checked="checked" onclick="getCountry()" />Africa
+                            <input type="checkbox" value="AS" onclick="getCountry()"/>Asia
+                            <input type="checkbox" value="EU" onclick="getCountry()"/>Europe
+                            <input type="checkbox" value="NA" onclick="getCountry()"/>North American
+                            <br />
+                            <input type="checkbox" value="OC" onclick="getCountry()"/>Oceania
+                            <input type="checkbox" value="SA" onclick="getCountry()"/>South American
+                            <input type="checkbox" value="AN" onclick="getCountry()"/>Anetatika
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Country
+                        </td>
+                        <td>
+                        <form name="test" id="test">
+                            <select name="country" onchange="getCity($(this).val())">
+                                <option>-- Please Select --</option>
+                            </select>
+                        
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            City
+                        </td>
+                        <td>
+                            <select name="city" id="city">
+                                <option>-- Please Select --</option>
+                            </select>
+                        </td>
+                    </tr>
+                    </form>
+                    <tr>
+                        <td colspan="2" height="20px">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <b>Special Notes</b><br />
+                            <i>Please leave your comment or any explanation here for any thing that you want to
+                                return back to us.</i>
+                            <ol>
+                            	<li>I'm sorry that I can't find out how to get the city's information...</li>
+                            	<li>I will keep doing my best to learn more, thank you!</li>
+                                <li>comment #1</li>
+                                <li>comment #2</li>
+                                <li>comment #3</li>
+                                <li>comment #4</li>
+                                <li>etc...</li>
+                            </ol>
+                        </td>
+                    </tr>
+                </table>
+                <p id="content"></p>
+                <!-- ***************************************************************** end of your implementation of HTML ******************************************************** -->
+</body>
+</html>
